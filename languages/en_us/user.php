@@ -305,6 +305,7 @@ $_LANG['ss'][SS_SHIPPED_ING] = 'Preparing'; // 已分单
 
 $_LANG['ps'][PS_UNPAYED] = 'Unpaid';
 $_LANG['ps'][PS_PAYING] = 'Paying';
+$_LANG['ps'][PS_PREPAYED] = 'PrePayed';
 $_LANG['ps'][PS_PAYED] = 'Payed';
 
 $_LANG['shipping_not_need'] = 'Don\'t need shipping method.';

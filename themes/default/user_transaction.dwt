@@ -286,7 +286,7 @@
         </tr>
         <tr>
           <td align="right" bgcolor="#ffffff">{$lang.detail_pay_status}：</td>
-          <td align="left" bgcolor="#ffffff">{$order.pay_status}&nbsp;&nbsp;&nbsp;&nbsp;{if $order.order_amount gt 0}{$order.pay_online}{/if}{$order.pay_time}</td>
+          <td align="left" bgcolor="#ffffff">{$order.pay_status}&nbsp;&nbsp;&nbsp;&nbsp;{$order.pay_time}</br>{if $order.order_amount gt 0}{$order.pay_online}{/if}</td>
         </tr>
         <tr>
           <td align="right" bgcolor="#ffffff">{$lang.detail_shipping_status}：</td>

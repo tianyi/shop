@@ -28,6 +28,15 @@ function return_url($code)
 }
 
 /**
+ * 取得返回信息地址
+ * @param   string  $code   支付方式代码
+ */
+function return_prepayurl($code)
+{
+    return $GLOBALS['ecs']->url() . 'prepayrespond.php?code=' . $code;
+}
+
+/**
  *  取得某支付方式信息
  *  @param  string  $code   支付方式代码
  */
@@ -164,16 +173,17 @@ function order_paid($log_id, $pay_status = PS_PAYED, $note = '')
                 $order    = $GLOBALS['db']->getRow($sql);
                 $order_id = $order['order_id'];
                 $order_sn = $order['order_sn'];
-
+                
                 /* 修改订单状态为已付款 */
                 $sql = 'UPDATE ' . $GLOBALS['ecs']->table('order_info') .
-                            " SET order_status = '" . OS_CONFIRMED . "', " .
+                            " SET order_status = " . ($pay_status==PS_PAYED?"order_status":OS_CONFIRMED) . ", " .
                                 " confirm_time = '" . gmtime() . "', " .
                                 " pay_status = '$pay_status', " .
                                 " pay_time = '".gmtime()."', " .
-                                " money_paid = order_amount," .
-                                " order_amount = 0 ".
-                       "WHERE order_id = '$order_id'";
+                                " money_paid = ".($pay_status==PS_PREPAYED?"prepay_amount":"order_amount + prepay_amount")."," .
+                                " order_amount = ".($pay_status==PS_PREPAYED?"order_amount - prepay_amount":"0") .
+                       " WHERE order_id = '$order_id'";
+                
                 $GLOBALS['db']->query($sql);
 
                 /* 记录订单操作记录 */

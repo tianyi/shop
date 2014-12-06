@@ -46,6 +46,7 @@
               <th bgcolor="#ffffff">{$lang.market_prices}</th>
               <!-- {/if} -->
               <th bgcolor="#ffffff">{$lang.shop_prices}</th>
+              <th bgcolor="#ffffff">{$lang.prepay_prices}</th>
               <th bgcolor="#ffffff">{$lang.number}</th>
               <th bgcolor="#ffffff">{$lang.subtotal}</th>
               <th bgcolor="#ffffff">{$lang.handle}</th>
@@ -86,6 +87,7 @@
               <td align="right" bgcolor="#ffffff">{$goods.market_price}</td>
               <!-- {/if} -->
               <td align="right" bgcolor="#ffffff">{$goods.goods_price}</td>
+              <td align="right" bgcolor="#ffffff">{$goods.prepay_price}</td>
               <td align="right" bgcolor="#ffffff">
                 <!-- {if $goods.goods_id gt 0 && $goods.is_gift eq 0 && $goods.parent_id eq 0} 普通商品可修改数量 -->
                 <input type="text" name="goods_number[{$goods.rec_id}]" id="goods_number_{$goods.rec_id}" value="{$goods.goods_number}" size="4" class="inputBg" style="text-align:center " onkeydown="showdiv(this)"/>
@@ -343,6 +345,7 @@
               <th bgcolor="#ffffff">{$lang.market_prices}</th>
               <!-- {/if} -->
               <th bgcolor="#ffffff">{if $gb_deposit}{$lang.deposit}{else}{$lang.shop_prices}{/if}</th>
+              <th bgcolor="#ffffff">{$lang.prepay_prices}</th>
               <th bgcolor="#ffffff">{$lang.number}</th>
               <th bgcolor="#ffffff">{$lang.subtotal}</th>
             </tr>
@@ -371,6 +374,7 @@
               <td align="right" bgcolor="#ffffff">{$goods.formated_market_price}</td>
               <!-- {/if} -->
               <td bgcolor="#ffffff" align="right">{$goods.formated_goods_price}</td>
+              <td bgcolor="#ffffff" align="right">{$goods.formated_prepay_price}</td>
               <td bgcolor="#ffffff" align="right">{$goods.goods_number}</td>
               <td bgcolor="#ffffff" align="right">{$goods.formated_subtotal}</td>
             </tr>
@@ -654,7 +658,7 @@
           <table width="99%" align="center" border="0" cellpadding="15" cellspacing="0" bgcolor="#fff" style="border:1px solid #ddd; margin:20px auto;" >
             <tr>
               <td align="center" bgcolor="#FFFFFF">
-              <!--{if $order.shipping_name}-->{$lang.select_shipping}: <strong>{$order.shipping_name}</strong>，<!--{/if}-->{$lang.select_payment}: <strong>{$order.pay_name}</strong>。{$lang.order_amount}: <strong>{$total.amount_formated}</strong>
+              <!--{if $order.shipping_name}-->{$lang.select_shipping}: <strong>{$order.shipping_name}</strong>，<!--{/if}-->{$lang.select_payment}: <strong>{$order.pay_name}</strong>。{$lang.prepay_amount}: <strong>{$total.prepayamount_formated}</strong>
               </td>
             </tr>
             <tr>

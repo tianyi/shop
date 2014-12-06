@@ -195,12 +195,12 @@ class alipay
             'partner'           => $payment['alipay_partner'],
             //'partner'           => ALIPAY_ID,
             '_input_charset'    => $charset,
-            'notify_url'        => return_url(basename(__FILE__, '.php')),
-            'return_url'        => return_url(basename(__FILE__, '.php')),
+            'notify_url'        => return_prepayurl(basename(__FILE__, '.php')),
+            'return_url'        => return_prepayurl(basename(__FILE__, '.php')),
             /* 业务参数 */
             'subject'           => $order['order_sn'],
             'out_trade_no'      => $order['order_sn'] . $order['log_id'],
-            'price'             => $order['order_prepay_amount'],
+            'price'             => $order['prepay_amount'],
             'quantity'          => 1,
             'payment_type'      => 1,
             /* 物流参数 */
@@ -250,6 +250,78 @@ class alipay
         $order_sn = trim($order_sn);
 
         /* 检查数字签名是否正确 */
+        /*
+        ksort($_GET);
+        reset($_GET);
+
+        $sign = '';
+        foreach ($_GET AS $key=>$val)
+        {
+            if ($key != 'sign' && $key != 'sign_type' && $key != 'code')
+            {
+                $sign .= "$key=$val&";
+            }
+        }
+
+        $sign = substr($sign, 0, -1) . $payment['alipay_key'];
+        //$sign = substr($sign, 0, -1) . ALIPAY_AUTH;
+        if (md5($sign) != $_GET['sign'])
+        {
+            return false;
+        }*/
+
+        /* 检查支付的金额是否相符 */
+        if (!check_money($order_sn, $_GET['total_fee']))
+        {
+            return false;
+        }
+
+        if ($_GET['trade_status'] == 'WAIT_SELLER_SEND_GOODS')
+        {
+            /* 改变订单状态 */
+            order_paid($order_sn, 3);
+
+            return true;
+        }
+        elseif ($_GET['trade_status'] == 'TRADE_FINISHED')
+        {
+            /* 改变订单状态 */
+            order_paid($order_sn, 3);
+
+            return true;
+        }
+        elseif ($_GET['trade_status'] == 'TRADE_SUCCESS')
+        {
+            /* 改变订单状态 */
+            order_paid($order_sn, 3);
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
+    /**
+     * 响应操作
+     */
+    function prepayrespond()
+    {
+        if (!empty($_POST))
+        {
+            foreach($_POST as $key => $data)
+            {
+                $_GET[$key] = $data;
+            }
+        }
+        $payment  = get_payment($_GET['code']);
+        $seller_email = rawurldecode($_GET['seller_email']);
+        $order_sn = str_replace($_GET['subject'], '', $_GET['out_trade_no']);
+        $order_sn = trim($order_sn);
+
+        /* 检查数字签名是否正确 */
+        /*
         ksort($_GET);
         reset($_GET);
 
@@ -268,6 +340,7 @@ class alipay
         {
             return false;
         }
+        */
 
         /* 检查支付的金额是否相符 */
         if (!check_money($order_sn, $_GET['total_fee']))
@@ -285,7 +358,7 @@ class alipay
         elseif ($_GET['trade_status'] == 'TRADE_FINISHED')
         {
             /* 改变订单状态 */
-            order_paid($order_sn);
+            order_paid($order_sn, 2);
 
             return true;
         }

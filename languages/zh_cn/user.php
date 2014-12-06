@@ -266,7 +266,8 @@ $_LANG['merge_order'] = '合并订单';
 $_LANG['no_priv'] = '你没有权限操作他人订单';
 $_LANG['buyer_cancel'] = '用户取消';
 $_LANG['cancel'] = '取消订单';
-$_LANG['pay_money'] = '付款';
+$_LANG['pay_prepay'] = '付预订款';
+$_LANG['pay_money'] = '付尾款';
 $_LANG['view_order'] = '查看订单';
 $_LANG['received'] = '确认收货';
 $_LANG['ss_received'] = '已完成';
@@ -305,6 +306,7 @@ $_LANG['ss'][SS_SHIPPED_ING] = '配货中'; // 已分单
 
 $_LANG['ps'][PS_UNPAYED] = '未付款';
 $_LANG['ps'][PS_PAYING] = '付款中';
+$_LANG['ps'][PS_PREPAYED] = '已付预订款';
 $_LANG['ps'][PS_PAYED] = '已付款';
 
 $_LANG['shipping_not_need'] = '无需使用配送方式';

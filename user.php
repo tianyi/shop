@@ -879,6 +879,25 @@ elseif ($action == 'order_detail')
         }
         $smarty->assign('payment_list', $payment_list);
     }
+    
+    /* 已发货，未付尾款时允许更换支付方式 */
+    if ($order['order_amount'] > 0 && $order['pay_status'] == PS_PREPAYED && $order['shipping_status'] == SS_RECEIVED)
+    {
+        $payment_list = available_payment_list(false, 0, true);
+
+        /* 过滤掉当前支付方式和余额支付方式 */
+        if(is_array($payment_list))
+        {
+            foreach ($payment_list as $key => $payment)
+            {
+                if ($payment['pay_id'] == $order['pay_id'] || $payment['pay_code'] == 'balance')
+                {
+                    unset($payment_list[$key]);
+                }
+            }
+        }
+        $smarty->assign('payment_list', $payment_list);
+    }
 
     /* 订单 支付 配送 状态语言项 */
     $order['order_status'] = $_LANG['os'][$order['order_status']];

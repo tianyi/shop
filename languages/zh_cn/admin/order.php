@@ -46,6 +46,7 @@ $_LANG['ss'][SS_SHIPPED_ING] = '发货中';
 
 $_LANG['ps'][PS_UNPAYED] = '未付款';
 $_LANG['ps'][PS_PAYING] = '付款中';
+$_LANG['ps'][PS_PREPAYED] = '已付预订款';
 $_LANG['ps'][PS_PAYED] = '已付款';
 
 $_LANG['ss_admin'][SS_SHIPPED_ING] = '发货中（前台状态：未发货）';

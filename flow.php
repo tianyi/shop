@@ -1561,7 +1561,7 @@ elseif ($_REQUEST['step'] == 'done')
     $order['card_fee']      = $total['card_fee'];
 
     $order['order_amount']  = number_format($total['amount'], 2, '.', '');
-    $order['order_prepay_amount']  = number_format($total['prepay_price'], 2, '.', '');
+    $order['prepay_amount']  = number_format($total['prepay_price'], 2, '.', '');
 
     /* 如果全部使用余额支付，检查余额是否足够 */
     if ($payment['pay_code'] == 'balance' && $order['order_amount'] > 0)
@@ -1769,7 +1769,10 @@ elseif ($_REQUEST['step'] == 'done')
     clear_all_files();
 
     /* 插入支付日志 */
-    $order['log_id'] = insert_pay_log($new_order_id, $order['order_amount'], PAY_ORDER);
+    
+    insert_pay_log($new_order_id, $order['order_amount'] - $order['prepay_amount'], PAY_ORDER, 0, 1);
+    
+    $order['log_id'] = insert_pay_log($new_order_id, $order['prepay_amount'], PAY_ORDER);
 
     /* 取得支付信息，生成支付代码 */
     if ($order['order_amount'] > 0)
@@ -1780,7 +1783,7 @@ elseif ($_REQUEST['step'] == 'done')
 
         $pay_obj    = new $payment['pay_code'];
 
-        $pay_online = $pay_obj->get_code($order, unserialize_config($payment['pay_config']));
+        $pay_online = $pay_obj->get_prepaycode($order, unserialize_config($payment['pay_config']));
 
         $order['pay_desc'] = $payment['pay_desc'];
 

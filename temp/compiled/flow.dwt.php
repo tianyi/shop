@@ -49,6 +49,7 @@
               <th bgcolor="#ffffff"><?php echo $this->_var['lang']['market_prices']; ?></th>
               <?php endif; ?>
               <th bgcolor="#ffffff"><?php echo $this->_var['lang']['shop_prices']; ?></th>
+              <th bgcolor="#ffffff"><?php echo $this->_var['lang']['prepay_prices']; ?></th>
               <th bgcolor="#ffffff"><?php echo $this->_var['lang']['number']; ?></th>
               <th bgcolor="#ffffff"><?php echo $this->_var['lang']['subtotal']; ?></th>
               <th bgcolor="#ffffff"><?php echo $this->_var['lang']['handle']; ?></th>
@@ -93,6 +94,7 @@
               <td align="right" bgcolor="#ffffff"><?php echo $this->_var['goods']['market_price']; ?></td>
               <?php endif; ?>
               <td align="right" bgcolor="#ffffff"><?php echo $this->_var['goods']['goods_price']; ?></td>
+              <td align="right" bgcolor="#ffffff"><?php echo $this->_var['goods']['prepay_price']; ?></td>
               <td align="right" bgcolor="#ffffff">
                 <?php if ($this->_var['goods']['goods_id'] > 0 && $this->_var['goods']['is_gift'] == 0 && $this->_var['goods']['parent_id'] == 0): ?>
                 <input type="text" name="goods_number[<?php echo $this->_var['goods']['rec_id']; ?>]" id="goods_number_<?php echo $this->_var['goods']['rec_id']; ?>" value="<?php echo $this->_var['goods']['goods_number']; ?>" size="4" class="inputBg" style="text-align:center " onkeydown="showdiv(this)"/>
@@ -362,6 +364,7 @@
               <th bgcolor="#ffffff"><?php echo $this->_var['lang']['market_prices']; ?></th>
               <?php endif; ?>
               <th bgcolor="#ffffff"><?php if ($this->_var['gb_deposit']): ?><?php echo $this->_var['lang']['deposit']; ?><?php else: ?><?php echo $this->_var['lang']['shop_prices']; ?><?php endif; ?></th>
+              <th bgcolor="#ffffff"><?php echo $this->_var['lang']['prepay_prices']; ?></th>
               <th bgcolor="#ffffff"><?php echo $this->_var['lang']['number']; ?></th>
               <th bgcolor="#ffffff"><?php echo $this->_var['lang']['subtotal']; ?></th>
             </tr>
@@ -394,6 +397,7 @@
               <td align="right" bgcolor="#ffffff"><?php echo $this->_var['goods']['formated_market_price']; ?></td>
               <?php endif; ?>
               <td bgcolor="#ffffff" align="right"><?php echo $this->_var['goods']['formated_goods_price']; ?></td>
+              <td bgcolor="#ffffff" align="right"><?php echo $this->_var['goods']['formated_prepay_price']; ?></td>
               <td bgcolor="#ffffff" align="right"><?php echo $this->_var['goods']['goods_number']; ?></td>
               <td bgcolor="#ffffff" align="right"><?php echo $this->_var['goods']['formated_subtotal']; ?></td>
             </tr>
@@ -689,7 +693,7 @@
           <table width="99%" align="center" border="0" cellpadding="15" cellspacing="0" bgcolor="#fff" style="border:1px solid #ddd; margin:20px auto;" >
             <tr>
               <td align="center" bgcolor="#FFFFFF">
-              <?php if ($this->_var['order']['shipping_name']): ?><?php echo $this->_var['lang']['select_shipping']; ?>: <strong><?php echo $this->_var['order']['shipping_name']; ?></strong>，<?php endif; ?><?php echo $this->_var['lang']['select_payment']; ?>: <strong><?php echo $this->_var['order']['pay_name']; ?></strong>。<?php echo $this->_var['lang']['order_amount']; ?>: <strong><?php echo $this->_var['total']['amount_formated']; ?></strong>
+              <?php if ($this->_var['order']['shipping_name']): ?><?php echo $this->_var['lang']['select_shipping']; ?>: <strong><?php echo $this->_var['order']['shipping_name']; ?></strong>，<?php endif; ?><?php echo $this->_var['lang']['select_payment']; ?>: <strong><?php echo $this->_var['order']['pay_name']; ?></strong>。<?php echo $this->_var['lang']['prepay_amount']; ?>: <strong><?php echo $this->_var['total']['prepayamount_formated']; ?></strong>
               </td>
             </tr>
             <tr>

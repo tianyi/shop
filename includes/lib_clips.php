@@ -397,12 +397,11 @@ function update_user_account($surplus)
  *
  * @return  int
  */
-function insert_pay_log($id, $amount, $type = PAY_SURPLUS, $is_paid = 0)
+function insert_pay_log($id, $amount, $type = PAY_SURPLUS, $is_paid = 0, $log_type = 0)
 {
-    $sql = 'INSERT INTO ' .$GLOBALS['ecs']->table('pay_log')." (order_id, order_amount, order_type, is_paid)".
-            " VALUES  ('$id', '$amount', '$type', '$is_paid')";
+    $sql = 'INSERT INTO ' .$GLOBALS['ecs']->table('pay_log')." (order_id, order_amount, order_type, is_paid, log_type)".
+            " VALUES  ('$id', '$amount', '$type', '$is_paid', '$log_type')";
     $GLOBALS['db']->query($sql);
-
      return $GLOBALS['db']->insert_id();
 }
 
@@ -415,10 +414,10 @@ function insert_pay_log($id, $amount, $type = PAY_SURPLUS, $is_paid = 0)
  *
  * @return  int
  */
-function get_paylog_id($surplus_id, $pay_type = PAY_SURPLUS)
+function get_paylog_id($surplus_id, $pay_type = PAY_SURPLUS, $log_type = 0 )
 {
     $sql = 'SELECT log_id FROM' .$GLOBALS['ecs']->table('pay_log').
-           " WHERE order_id = '$surplus_id' AND order_type = '$pay_type' AND is_paid = 0";
+           " WHERE order_id = '$surplus_id' AND order_type = '$pay_type' AND is_paid = 0 AND log_type = ".$log_type;
 
     return $GLOBALS['db']->getOne($sql);
 }
