@@ -167,6 +167,7 @@ elseif ($_REQUEST['act'] == 'add' || $_REQUEST['act'] == 'edit' || $_REQUEST['ac
             'other_cat'     => array(), // 扩展分类
             'goods_type'    => 0,       // 商品类型
             'shop_price'    => 0,
+            'prepay_price'    => 0,
             'promote_price' => 0,
             'market_price'  => 0,
             'integral'      => 0,

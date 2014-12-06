@@ -25,7 +25,7 @@ if (!defined('IN_ECS'))
  */
 function gmtime()
 {
-    return (time() - date('Z'));
+    return (time() - @date('Z'));
 }
 
 /**
