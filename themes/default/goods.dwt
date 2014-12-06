@@ -290,6 +290,7 @@ function reg(str){
        <!-- {/if} -->
        <!--本店售价-->
        <strong>{$lang.shop_price}</strong><font class="shop" id="ECS_SHOPPRICE">{$goods.shop_price_formated}</font><br />
+       <strong>{$lang.prepay_price}</strong><font class="shop" id="ECS_SHOPPRICE">{$goods.prepay_price_formated}</font><br />
        <!-- {foreach from=$rank_prices item=rank_price key=key} 会员等级对应的价格-->
        <strong>{$rank_price.rank_name}：</strong><font class="shop" id="ECS_RANKPRICE_{$key}">{$rank_price.price}</font><br />
        <!--{/foreach}-->

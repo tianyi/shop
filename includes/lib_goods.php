@@ -501,7 +501,7 @@ function get_goods_info($goods_id)
     $time = gmtime();
     $sql = 'SELECT g.*, c.measure_unit, b.brand_id, b.brand_name AS goods_brand, m.type_money AS bonus_money, ' .
                 'IFNULL(AVG(r.comment_rank), 0) AS comment_rank, ' .
-                "IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS rank_price " .
+                "IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS rank_price, g.prepay_price " .
             'FROM ' . $GLOBALS['ecs']->table('goods') . ' AS g ' .
             'LEFT JOIN ' . $GLOBALS['ecs']->table('category') . ' AS c ON g.cat_id = c.cat_id ' .
             'LEFT JOIN ' . $GLOBALS['ecs']->table('brand') . ' AS b ON g.brand_id = b.brand_id ' .
@@ -523,6 +523,7 @@ function get_goods_info($goods_id)
         /* 获得商品的销售价格 */
         $row['market_price']        = price_format($row['market_price']);
         $row['shop_price_formated'] = price_format($row['shop_price']);
+        $row['prepay_price_formated'] = price_format($row['prepay_price']);
 
         /* 修正促销价格 */
         if ($row['promote_price'] > 0)
