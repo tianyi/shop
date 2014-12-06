@@ -161,6 +161,76 @@ class alipay
 
         return $button;
     }
+    
+    function get_prepaycode($order, $payment)
+    {
+        if (!defined('EC_CHARSET'))
+        {
+            $charset = 'utf-8';
+        }
+        else
+        {
+            $charset = EC_CHARSET;
+        }
+
+        $real_method = $payment['alipay_pay_method'];
+
+        switch ($real_method){
+            case '0':
+                $service = 'trade_create_by_buyer';
+                break;
+            case '1':
+                $service = 'create_partner_trade_by_buyer';
+                break;
+            case '2':
+                $service = 'create_direct_pay_by_user';
+                break;
+        }
+
+        $extend_param = 'isv^sh22';
+
+        $parameter = array(
+            'extend_param'      => $extend_param,
+            'service'           => $service,
+            'partner'           => $payment['alipay_partner'],
+            //'partner'           => ALIPAY_ID,
+            '_input_charset'    => $charset,
+            'notify_url'        => return_url(basename(__FILE__, '.php')),
+            'return_url'        => return_url(basename(__FILE__, '.php')),
+            /* 业务参数 */
+            'subject'           => $order['order_sn'],
+            'out_trade_no'      => $order['order_sn'] . $order['log_id'],
+            'price'             => $order['order_prepay_amount'],
+            'quantity'          => 1,
+            'payment_type'      => 1,
+            /* 物流参数 */
+            'logistics_type'    => 'EXPRESS',
+            'logistics_fee'     => 0,
+            'logistics_payment' => 'BUYER_PAY_AFTER_RECEIVE',
+            /* 买卖双方信息 */
+            'seller_email'      => $payment['alipay_account']
+        );
+
+        ksort($parameter);
+        reset($parameter);
+
+        $param = '';
+        $sign  = '';
+
+        foreach ($parameter AS $key => $val)
+        {
+            $param .= "$key=" .urlencode($val). "&";
+            $sign  .= "$key=$val&";
+        }
+
+        $param = substr($param, 0, -1);
+        $sign  = substr($sign, 0, -1). $payment['alipay_key'];
+        //$sign  = substr($sign, 0, -1). ALIPAY_AUTH;
+
+        $button = '<div style="text-align:center"><input type="button" onclick="window.open(\'https://mapi.alipay.com/gateway.do?'.$param. '&sign='.md5($sign).'&sign_type=MD5\')" value="' .$GLOBALS['_LANG']['pay_button']. '" /></div>';
+
+        return $button;
+    }
 
     /**
      * 响应操作

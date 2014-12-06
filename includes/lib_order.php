@@ -558,6 +558,7 @@ function order_fee($order, $goods, $consignee)
     $total  = array('real_goods_count' => 0,
                     'gift_amount'      => 0,
                     'goods_price'      => 0,
+                    'prepay_price'      => 0,
                     'market_price'     => 0,
                     'discount'         => 0,
                     'pack_fee'         => 0,
@@ -582,6 +583,7 @@ function order_fee($order, $goods, $consignee)
         }
 
         $total['goods_price']  += $val['goods_price'] * $val['goods_number'];
+        $total['prepay_price']  += $val['prepay_price'] * $val['goods_number'];
         $total['market_price'] += $val['market_price'] * $val['goods_number'];
     }
 
@@ -793,6 +795,7 @@ function order_fee($order, $goods, $consignee)
 
     $total['amount']           += $total['pay_fee']; // 订单总额累加上支付费用
     $total['amount_formated']  = price_format($total['amount'], false);
+    $total['prepayamount_formated']  = price_format($total['prepay_price'], false);
 
     /* 取得可以得到的积分和红包 */
     if ($order['extension_code'] == 'group_buy')
@@ -859,8 +862,8 @@ function get_order_sn()
 function cart_goods($type = CART_GENERAL_GOODS)
 {
     $sql = "SELECT rec_id, user_id, goods_id, goods_name, goods_sn, goods_number, " .
-            "market_price, goods_price, goods_attr, is_real, extension_code, parent_id, is_gift, is_shipping, " .
-            "goods_price * goods_number AS subtotal " .
+            "market_price, goods_price, prepay_price, goods_attr, is_real, extension_code, parent_id, is_gift, is_shipping, " .
+            "goods_price * goods_number AS subtotal, prepay_price * goods_number AS subtotalprepay " .
             "FROM " . $GLOBALS['ecs']->table('cart') .
             " WHERE session_id = '" . SESS_ID . "' " .
             "AND rec_type = '$type'";
@@ -872,7 +875,9 @@ function cart_goods($type = CART_GENERAL_GOODS)
     {
         $arr[$key]['formated_market_price'] = price_format($value['market_price'], false);
         $arr[$key]['formated_goods_price']  = price_format($value['goods_price'], false);
+        $arr[$key]['formated_prepay_price']  = price_format($value['prepay_price'], false);
         $arr[$key]['formated_subtotal']     = price_format($value['subtotal'], false);
+        $arr[$key]['formated_subtotalprepay']     = price_format($value['subtotalprepay'], false);
 
         if ($value['extension_code'] == 'package_buy')
         {
@@ -1016,7 +1021,7 @@ function addto_cart($goods_id, $num = 1, $spec = array(), $parent = 0)
 
     /* 取得商品信息 */
     $sql = "SELECT g.goods_name, g.goods_sn, g.is_on_sale, g.is_real, ".
-                "g.market_price, g.shop_price AS org_price, g.promote_price, g.promote_start_date, ".
+                "g.market_price, g.shop_price AS org_price, g.prepay_price, g.promote_price, g.promote_start_date, ".
                 "g.promote_end_date, g.goods_weight, g.integral, g.extension_code, ".
                 "g.goods_number, g.is_alone_sale, g.is_shipping,".
                 "IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price ".
@@ -1119,6 +1124,7 @@ function addto_cart($goods_id, $num = 1, $spec = array(), $parent = 0)
         'product_id'    => $product_info['product_id'],
         'goods_name'    => addslashes($goods['goods_name']),
         'market_price'  => $goods['market_price'],
+        'prepay_price'  => $goods['prepay_price'],
         'goods_attr'    => addslashes($goods_attr),
         'goods_attr_id' => $goods_attr_id,
         'is_real'       => $goods['is_real'],
@@ -1611,6 +1617,7 @@ function get_cart_goods()
 
         $row['subtotal']     = price_format($row['goods_price'] * $row['goods_number'], false);
         $row['goods_price']  = price_format($row['goods_price'], false);
+        $row['prepay_price']  = price_format($row['prepay_price'], false);
         $row['market_price'] = price_format($row['market_price'], false);
 
         /* 统计实体商品和虚拟商品的个数 */
@@ -1655,6 +1662,7 @@ function get_cart_goods()
         100 / $total['market_price']).'%' : 0;
     }
     $total['goods_price']  = price_format($total['goods_price'], false);
+    $total['prepay_price']  = price_format($total['prepay_price'], false);
     $total['market_price'] = price_format($total['market_price'], false);
     $total['real_goods_count']    = $real_goods_count;
     $total['virtual_goods_count'] = $virtual_goods_count;
