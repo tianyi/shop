@@ -2529,7 +2529,7 @@ elseif ($_REQUEST['act'] == 'operate')
         $action         = $_LANG['op_confirm'];
         $operation      = 'confirm';
     }
-    /* 付款 */
+    /* 付尾款 */
     elseif (isset($_POST['pay']))
     {
         /* 检查权限 */
@@ -2537,6 +2537,15 @@ elseif ($_REQUEST['act'] == 'operate')
         $require_note   = $_CFG['order_pay_note'] == 1;
         $action         = $_LANG['op_pay'];
         $operation      = 'pay';
+    }
+    /* 付预付款 */
+    elseif (isset($_POST['prepay']))
+    {
+        /* 检查权限 */
+        admin_priv('order_ps_edit');
+        $require_note   = $_CFG['order_prepay_note'] == 1;
+        $action         = $_LANG['op_prepay'];
+        $operation      = 'prepay';
     }
     /* 未付款 */
     elseif (isset($_POST['unpay']))
@@ -3425,7 +3434,7 @@ elseif ($_REQUEST['act'] == 'operate_post')
             }
         }
     }
-    /* 付款 */
+    /* 付尾款 */
     elseif ('pay' == $operation)
     {
         /* 检查权限 */
@@ -3446,6 +3455,33 @@ elseif ($_REQUEST['act'] == 'operate_post')
         {
             $arr['shipping_status'] = SS_RECEIVED;
             $order['shipping_status'] = SS_RECEIVED;
+        }
+        update_order($order_id, $arr);
+
+        /* 记录log */
+        order_action($order['order_sn'], OS_CONFIRMED, $order['shipping_status'], PS_PAYED, $action_note);
+    }
+    /* 付预订款 */
+    elseif ('prepay' == $operation)
+    {
+        /* 检查权限 */
+        admin_priv('order_ps_edit');
+
+        /* 标记订单为已确认、已付款，更新付款时间和已支付金额，如果是货到付款，同时修改订单为“收货确认” */
+        if ($order['order_status'] != OS_CONFIRMED)
+        {
+            $arr['order_status']    = OS_CONFIRMED;
+            $arr['confirm_time']    = gmtime();
+        }
+        $arr['pay_status']  = PS_PREPAYED;
+        $arr['pay_time']    = gmtime();
+        $arr['money_paid']  = $order['prepay_amount'];
+        $arr['order_amount']= $order['money_paid'] + $order['order_amount'] - $order['prepay_amount'];
+        $payment = payment_info($order['pay_id']);
+        if ($payment['is_cod'])
+        {
+            $arr['shipping_status'] = SS_SHIPPED;
+            $order['shipping_status'] = SS_SHIPPED;
         }
         update_order($order_id, $arr);
 
@@ -4611,7 +4647,7 @@ function operable_list($order)
                 /* 不是货到付款 */
                 if ($priv_list['ps'])
                 {
-                    $list['pay'] = true;  // 付款
+                    $list['prepay'] = true;  // 付款
                 }
             }
         }
@@ -4647,7 +4683,7 @@ function operable_list($order)
                     /* 不是货到付款 */
                     if ($priv_list['ps'])
                     {
-                        $list['pay'] = true; // 付款
+                        $list['prepay'] = true; // 付款
                     }
                 }
             }
@@ -4666,7 +4702,69 @@ function operable_list($order)
                 /* 状态：已确认、未付款、已发货或已收货 => 货到付款 */
                 if ($priv_list['ps'])
                 {
-                    $list['pay'] = true; // 付款
+                    $list['prepay'] = true; // 付款
+                }
+                if ($priv_list['ss'])
+                {
+                    if (SS_SHIPPED == $ss)
+                    {
+                        $list['receive'] = true; // 收货确认
+                    }
+                    $list['unship'] = true; // 设为未发货
+                    if ($priv_list['os'])
+                    {
+                        $list['return'] = true; // 退货
+                    }
+                }
+            }
+        }
+        else if (PS_PREPAYED == $ps) 
+        {
+            /* 状态：已确认、未付款 */
+            if (SS_UNSHIPPED == $ss || SS_PREPARING == $ss)
+            {
+                /* 状态：已确认、未付款、未发货（或配货中） */
+                if ($priv_list['os'])
+                {
+                    $list['cancel'] = true; // 取消
+                    $list['invalid'] = true; // 无效
+                }
+                if ($priv_list['ss'])
+                {
+                    if (SS_UNSHIPPED == $ss)
+                    {
+                        $list['prepare'] = true; // 配货
+                    }
+                    $list['split'] = true; // 分单
+                }
+                if ($priv_list['ps'])
+                {
+                    $list['unpay'] = true; // 设为未付款
+                    if ($priv_list['os'])
+                    {
+                        $list['cancel'] = true; // 取消
+                    }
+                }
+            }
+            /* 状态：已确认、未付款、发货中 */
+            elseif (SS_SHIPPED_ING == $ss || SS_SHIPPED_PART == $ss)
+            {
+                // 部分分单
+                if (OS_SPLITING_PART == $os)
+                {
+                    $list['split'] = true; // 分单
+                }
+                $list['to_delivery'] = true; // 去发货
+            }
+            else
+            {
+                /* 状态：已确认、未付款、已发货或已收货 => 货到付款 */
+                if ($priv_list['ps'])
+                {
+                    if (SS_SHIPPED == $ss)
+                    {
+                        $list['pay'] = true; // 付款
+                    }
                 }
                 if ($priv_list['ss'])
                 {
@@ -4732,6 +4830,7 @@ function operable_list($order)
                 if ($priv_list['ps'] && $is_cod)
                 {
                     $list['unpay']  = true; // 设为未付款
+                    $list['pay']  = true; // 设为已付尾款
                 }
                 if ($priv_list['os'] && $priv_list['ss'] && $priv_list['ps'])
                 {
